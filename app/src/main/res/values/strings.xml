@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">MiVerificador</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_verificador">Verificador</string>
+    <string name="action_tienda">Alta de tienda</string>
+    <string name="action_alta">Registro de producto</string>
+    <string name="title_activity_alta">Registro de producto</string>
+    <string name="title_activity_verificador">Verificador</string>
+    <string name="title_activity_alta__tienda">Registro de tienda</string>
 </resources>

@@ -1,20 +1,50 @@
 package net.ddns.deathaura.miverificador;
 
-import java.util.Date;
-
 public class Registros {
-    private Producto codigo;
-    private Tienda tienda;
+    private String producto;
+    private String tienda;
     private double precio;
-    private Date fecha;
+    private String fecha;
 
     public Registros() {
     }
 
-    public Registros(Producto codigo, Tienda tienda, double precio, Date fecha) {
-        this.codigo = codigo;
+    public Registros(String producto, String tienda, double precio, String fecha) {
+        this.producto = producto;
         this.tienda = tienda;
         this.precio = precio;
+        this.fecha = fecha;
+    }
+
+    public String getProducto() {
+        return producto;
+    }
+
+    public void setProducto(String producto) {
+        this.producto = producto;
+    }
+
+    public String getTienda() {
+        return tienda;
+    }
+
+    public void setTienda(String tienda) {
+        this.tienda = tienda;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
         this.fecha = fecha;
     }
 }

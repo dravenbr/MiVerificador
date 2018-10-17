@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/lay_tienda"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:text="TIENDA"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/lay_precio"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:text="$00.00"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/lay_fecha"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:text="Actualizado el 10/10/18"
+        android:textAlignment="textEnd"
+        android:textSize="10sp" />
+</LinearLayout>
