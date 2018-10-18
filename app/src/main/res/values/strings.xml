@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">MiVerificador</string>
+    <string name="menu_delete">Quitar producto</string>
     <string name="action_verificador">Verificador</string>
     <string name="action_tienda">Alta de tienda</string>
     <string name="action_alta">Registro de producto</string>
+    <string name="action_compra">Carrito de compras</string>
     <string name="title_activity_alta">Registro de producto</string>
     <string name="title_activity_verificador">Verificador</string>
     <string name="title_activity_alta__tienda">Registro de tienda</string>
+    <string name="title_activity_compras">Mis listas de compras</string>
+    <string name="title_activity_carrito">Mi carrito de compras</string>
 </resources>

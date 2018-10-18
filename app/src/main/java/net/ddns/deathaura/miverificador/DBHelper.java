@@ -3,6 +3,7 @@ package net.ddns.deathaura.miverificador;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -88,10 +89,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return res.getString(res.getColumnIndex(PRODUCTOS_COL_NOMBRE));
     }
 
-    public int numberOfRows() {
+    public boolean isRegistered(String barcode) {
         SQLiteDatabase db = this.getReadableDatabase();
-        //int numRows = (int) DatabaseUtils.queryNumEntries(db, CONTACTS_TABLE_NAME);
-        return 0;
+        int numRows = (int) DatabaseUtils.longForQuery(db, "SELECT COUNT(*) FROM " + PRODUCTOS_TABLE_NAME + " WHERE " + PRODUCTOS_COL_CODIGO + "='" + barcode + "'", null);
+
+        return numRows != 0;
+
     }
 
     public boolean updateContact(Integer id, String name, String phone, String email, String street, String place) {

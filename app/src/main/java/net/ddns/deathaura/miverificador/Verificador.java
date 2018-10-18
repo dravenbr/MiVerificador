@@ -142,6 +142,10 @@ public class Verificador extends AppCompatActivity {
                 Intent tienda = new Intent(Verificador.this, Alta_Tienda.class);
                 Verificador.this.startActivity(tienda);
                 break;
+            case R.id.action_compra:
+                Intent carrito = new Intent(Verificador.this, Carrito.class);
+                Verificador.this.startActivity(carrito);
+                break;
             default:
                 break;
         }
