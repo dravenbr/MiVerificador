@@ -32,7 +32,6 @@ public class Carrito extends AppCompatActivity {
     IntentIntegrator barcode_scanner;
     Button button_guardar;
     TextView label_total;
-    Spinner combo_tienda;
     ListView list1;
     AdaptadorProductos adaptador;
     ArrayList<Producto> array_productos;
@@ -42,6 +41,7 @@ public class Carrito extends AppCompatActivity {
     double total;
     int cantidad;
     IntentResult result;
+    String barcode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +82,20 @@ public class Carrito extends AppCompatActivity {
                 barcode_scanner.initiateScan();
             }
         });
+        button_guardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (Producto p : array_productos) {
+                    try {
+                        database.insertRegistro(p.getCodigo(), combo_tiendas.getSelectedItem().toString(), p.getPrecio());
+                    } catch (Exception ex) {
+                        Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+                Toast.makeText(getApplicationContext(), "Datos de la compra guardados", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        });
     }
 
     @Override
@@ -119,66 +133,63 @@ public class Carrito extends AppCompatActivity {
             if (result.getContents() == null) {
                 Toast.makeText(this, "Escaneo cancelado", Toast.LENGTH_LONG).show();
             } else {
+                barcode = result.getContents();
                 //con el código haces la consulta a la db para obtener la info del producto
                 try {
-                    LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);
-                    View mView = layoutInflaterAndroid.inflate(R.layout.input_precio, null);
-                    AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
-                    alertDialogBuilderUserInput.setView(mView);
-
-                    final EditText userInputDialog_precio = mView.findViewById(R.id.userInputDialog_precio);
-                    final EditText userInputDialog_cantidad = mView.findViewById(R.id.userInputDialog_cantidad);
-                    userInputDialog_cantidad.setText("1");
-                    alertDialogBuilderUserInput
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialogBox, int id) {
-                                    if (database.isRegistered(result.getContents())) {
-                                        if (userInputDialog_precio.getText().toString() == null || userInputDialog_precio.getText().toString().isEmpty()) {
-                                            precio = 0.0;
-                                        } else {
-                                            precio = Double.parseDouble(userInputDialog_precio.getText().toString());
-                                        }
-                                        cantidad = Integer.parseInt(userInputDialog_cantidad.getText().toString());
-                                        adaptador.add(new Producto(result.getContents(), database.getProductoNombre(result.getContents()), precio, cantidad, precio * cantidad));
-                                        adaptador.notifyDataSetChanged();
-                                        total += precio * cantidad;
-                                        label_total.setText("$" + Double.toString(total));
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), "Producto no registrado", Toast.LENGTH_LONG).show();
-                                        Intent alta = new Intent(Carrito.this, Alta.class);
-                                        alta.putExtra("code", result.getContents()); //Optional parameters
-                                        Carrito.this.startActivity(alta);
-                                    }
-
-                                }
-                            })
-                            .setNegativeButton("Cancel",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialogBox, int id) {
-                                            dialogBox.cancel();
-                                        }
-                                    });
-
-                    AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
-                    alertDialogAndroid.show();
-                    ///////////
-
-                    //Toast.makeText(getApplicationContext(), "Agregado correctamente", Toast.LENGTH_SHORT).show();
-
+                    if (database.isRegistered(barcode)) {
+                        launchUserInput();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Producto no registrado", Toast.LENGTH_SHORT).show();
+                        Intent alta = new Intent(Carrito.this, Alta.class);
+                        alta.putExtra("code", barcode); //Optional parameters
+                        Carrito.this.startActivity(alta);
+                        launchUserInput();
+                    }
                 } catch (Exception ex) {
-                    // Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
-                    Toast.makeText(getApplicationContext(), "Producto no registrado", Toast.LENGTH_LONG).show();
-                    Intent alta = new Intent(Carrito.this, Alta.class);
-                    alta.putExtra("code", result.getContents()); //Optional parameters
-                    Carrito.this.startActivity(alta);
+                    Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
                 }
-
-
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    protected void launchUserInput() {
+        LayoutInflater layoutInflaterAndroid = LayoutInflater.from(this);
+        View mView = layoutInflaterAndroid.inflate(R.layout.input_precio, null);
+        AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(this);
+        alertDialogBuilderUserInput.setView(mView);
+
+        final EditText userInputDialog_precio = mView.findViewById(R.id.userInputDialog_precio);
+        final TextView userDialog_nombre = mView.findViewById(R.id.userDialog_nombre);
+        final EditText userInputDialog_cantidad = mView.findViewById(R.id.userInputDialog_cantidad);
+        userInputDialog_cantidad.setText("1");
+        userDialog_nombre.setText(database.getProductoNombre(barcode));
+        alertDialogBuilderUserInput
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogBox, int id) {
+                        if (userInputDialog_precio.getText().toString() == null || userInputDialog_precio.getText().toString().isEmpty()) {
+                            precio = 0.0;
+                        } else {
+                            precio = Double.parseDouble(userInputDialog_precio.getText().toString());
+                        }
+                        cantidad = Integer.parseInt(userInputDialog_cantidad.getText().toString());
+                        adaptador.add(new Producto(barcode, database.getProductoNombre(barcode), precio, cantidad, precio * cantidad));
+                        adaptador.notifyDataSetChanged();
+                        total += precio * cantidad;
+                        label_total.setText("TOTAL: $" + Double.toString(total));
+                    }
+                })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                dialogBox.cancel();
+                            }
+                        });
+
+        AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+        alertDialogAndroid.show();
     }
 
     class AdaptadorProductos extends android.widget.ArrayAdapter<Producto> {

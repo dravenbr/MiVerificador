@@ -51,12 +51,15 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void insertProducto(String codigo_producto, String nombre_producto, String tienda, double precio) {
+    public void insertProducto(String codigo_producto, String nombre_producto) {
         //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("INSERT OR IGNORE INTO productos (codigo, nombre) VALUES('" + codigo_producto + "','" + nombre_producto + "')");
+    }
+
+    public void insertRegistro(String codigo_producto, String tienda, double precio) {
+        //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(REGISTROS_COL_PRODUCTO, codigo_producto);
         contentValues.put(REGISTROS_COL_TIENDA, tienda);
@@ -134,7 +137,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<String> getAllTiendas() {
         ArrayList<String> array_list = new ArrayList<String>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from tiendas", null);
+        Cursor res = db.rawQuery("select * from tiendas order by nombre asc", null);
         res.moveToFirst();
 
         while (res.isAfterLast() == false) {
@@ -147,7 +150,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Registros> getRegistros(String codigo) {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Registros> lista = new ArrayList<Registros>();
-        Cursor res = db.rawQuery("select tienda, precio, fecha from registros where producto = '" + codigo + "' order by precio asc", null);
+        Cursor res = db.rawQuery("select tienda, precio, fecha from registros where producto = '" + codigo + "' order by fecha desc, precio asc", null);
         res.moveToFirst();
         while (res.isAfterLast() == false) {
             lista.add(new Registros(codigo, res.getString(res.getColumnIndex(REGISTROS_COL_TIENDA)), Double.parseDouble(res.getString(res.getColumnIndex(REGISTROS_COL_PRECIO))), res.getString(res.getColumnIndex(REGISTROS_COL_FECHA))));
